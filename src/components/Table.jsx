@@ -38,6 +38,7 @@ function Table() {
     <div>
       <div>
         <input
+          placeholder="Pesquise um planeta"
           type="text"
           data-testid="name-filter"
           onChange={ ({ target }) => setInputSearch(target.value) }
