@@ -14,7 +14,7 @@ function Table() {
   }, [planets]);
 
   const handleFilter = () => {
-    const filteredData = planets.filter((planet) => {
+    const filteredData = filteredPlanets.filter((planet) => {
       const planetValue = parseFloat(planet[columnsFilter]);
       const targetValue = parseFloat(valueFilter);
 
