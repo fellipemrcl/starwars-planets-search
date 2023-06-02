@@ -20,6 +20,7 @@ function Table() {
   const [comparisonFilter, setComparisonFilter] = useState('maior que');
   const [valueFilter, setValueFilter] = useState(0);
   const [filteredPlanets, setFilteredPlanets] = useState([]);
+  const [sortOrder, setSortOrder] = useState({ column: 'population', sort: 'ASC' });
 
   useEffect(() => {
     setFilteredPlanets(planets);
@@ -50,6 +51,39 @@ function Table() {
       .filter((comparisonOption) => comparisonOption !== comparisonFilter);
     setColumnFilterOptions(filteredColumnsOptions);
     setComparisonFilterOptions(filteredComparisonOptions);
+  };
+
+  // IDEIA BASE P/ A LÓGICA: https://blog.logrocket.com/creating-react-sortable-table/
+
+  const MINUS_ONE = -1;
+
+  const compareColumns = (columnA, columnB) => {
+    if (columnA === columnB) return 0;
+
+    const numericA = parseFloat(columnA);
+    const numericB = parseFloat(columnB);
+
+    if (!Number.isNaN(numericA) && !Number.isNaN(numericB)) {
+      if (numericA < numericB) return MINUS_ONE;
+      if (numericA > numericB) return 1;
+    }
+
+    if (Number.isNaN(numericA) && Number.isNaN(numericB)) {
+      if (columnA === 'unknown') return 1;
+      if (columnB === 'unknown') return MINUS_ONE;
+    }
+
+    return 0;
+  };
+
+  const handleSort = () => {
+    const sortedPlanets = [...filteredPlanets].sort((a, b) => {
+      const columnA = a[sortOrder.column];
+      const columnB = b[sortOrder.column];
+      return compareColumns(columnA, columnB)
+      * (sortOrder.sort === 'ASC' ? 1 : MINUS_ONE);
+    });
+    setFilteredPlanets(sortedPlanets);
   };
 
   return (
@@ -116,6 +150,54 @@ function Table() {
           Filtrar
 
         </button>
+        <label htmlFor="columnSort">
+          Ordenar por:
+          <select
+            data-testid="column-sort"
+            value={ sortOrder.column }
+            onChange={ ({ target }) => setSortOrder(
+              { ...sortOrder, column: target.value },
+            ) }
+            id="columnSort"
+          >
+            {columnsFilterOptions.map((columnOption, index) => (
+              <option key={ index } value={ columnOption }>
+                {columnOption}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Ascendente:
+          <input
+            type="radio"
+            data-testid="column-sort-input-asc"
+            value="ASC"
+            checked={ sortOrder.sort === 'ASC' }
+            onChange={ ({ target }) => setSortOrder(
+              { ...sortOrder, sort: target.value },
+            ) }
+          />
+        </label>
+        <label>
+          Descendente:
+          <input
+            type="radio"
+            data-testid="column-sort-input-desc"
+            value="DESC"
+            checked={ sortOrder.sort === 'DESC' }
+            onChange={ ({ target }) => setSortOrder(
+              { ...sortOrder, sort: target.value },
+            ) }
+          />
+        </label>
+        <button
+          data-testid="column-sort-button"
+          type="button"
+          onClick={ handleSort }
+        >
+          Ordenar
+        </button>
       </div>
       <table>
         <thead>
@@ -134,7 +216,7 @@ function Table() {
             .filter((planet) => planet.name.toLowerCase().includes(inputSearch))
             .map((planet, i) => (
               <tr key={ i }>
-                <td>{planet.name}</td>
+                <td data-testid="planet-name">{planet.name}</td>
                 <td>{planet.rotation_period}</td>
                 <td>{planet.orbital_period}</td>
                 <td>{planet.diameter}</td>
