@@ -4,6 +4,18 @@ import PlanetsContext from '../context/Context';
 function Table() {
   const { planets } = useContext(PlanetsContext);
   const [inputSearch, setInputSearch] = useState('');
+  const [columnsFilterOptions, setColumnFilterOptions] = useState([
+    'population',
+    'orbital_period',
+    'diameter',
+    'rotation_period',
+    'surface_water',
+  ]);
+  const [comparisonFilterOptions, setComparisonFilterOptions] = useState([
+    'maior que',
+    'menor que',
+    'igual a',
+  ]);
   const [columnsFilter, setColumnsFilter] = useState('population');
   const [comparisonFilter, setComparisonFilter] = useState('maior que');
   const [valueFilter, setValueFilter] = useState(0);
@@ -32,6 +44,12 @@ function Table() {
     });
 
     setFilteredPlanets(filteredData);
+    const filteredColumnsOptions = columnsFilterOptions
+      .filter((columnOption) => columnOption !== columnsFilter);
+    const filteredComparisonOptions = comparisonFilterOptions
+      .filter((comparisonOption) => comparisonOption !== comparisonFilter);
+    setColumnFilterOptions(filteredColumnsOptions);
+    setComparisonFilterOptions(filteredComparisonOptions);
   };
 
   return (
@@ -51,11 +69,15 @@ function Table() {
             onChange={ ({ target }) => setColumnsFilter(target.value) }
             id="columnFilter"
           >
-            <option>population</option>
-            <option>orbital_period</option>
-            <option>diameter</option>
-            <option>rotation_period</option>
-            <option>surface_water</option>
+            {columnsFilterOptions.map((columnOption, index) => (
+              <option
+                key={ index }
+                value={ columnOption }
+              >
+                {columnOption}
+
+              </option>
+            ))}
           </select>
         </label>
         <label htmlFor="comparisonFilter">
@@ -66,9 +88,15 @@ function Table() {
             onChange={ ({ target }) => setComparisonFilter(target.value) }
             id="comparisonFilter"
           >
-            <option>maior que</option>
-            <option>menor que</option>
-            <option>igual a</option>
+            {comparisonFilterOptions.map((comparisonOption, index) => (
+              <option
+                key={ index }
+                value={ comparisonOption }
+              >
+                {comparisonOption}
+
+              </option>
+            ))}
           </select>
         </label>
         <label htmlFor="valueFilter">
