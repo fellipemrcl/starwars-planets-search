@@ -57,32 +57,29 @@ function Table() {
 
   const MINUS_ONE = -1;
 
-  const compareColumns = (columnA, columnB) => {
-    if (columnA === columnB) return 0;
-
-    const numericA = parseFloat(columnA);
-    const numericB = parseFloat(columnB);
-
-    if (!Number.isNaN(numericA) && !Number.isNaN(numericB)) {
-      if (numericA < numericB) return MINUS_ONE;
-      if (numericA > numericB) return 1;
-    }
-
-    if (Number.isNaN(numericA) && Number.isNaN(numericB)) {
-      if (columnA === 'unknown') return 1;
-      if (columnB === 'unknown') return MINUS_ONE;
-    }
-
-    return 0;
-  };
-
   const handleSort = () => {
     const sortedPlanets = [...filteredPlanets].sort((a, b) => {
       const columnA = a[sortOrder.column];
       const columnB = b[sortOrder.column];
-      return compareColumns(columnA, columnB)
-      * (sortOrder.sort === 'ASC' ? 1 : MINUS_ONE);
+
+      if (columnA === 'unknown' && columnB === 'unknown') {
+        return 0;
+      } if (columnA === 'unknown') {
+        return 1;
+      } if (columnB === 'unknown') {
+        return MINUS_ONE;
+      }
+
+      const numericA = parseFloat(columnA);
+      const numericB = parseFloat(columnB);
+
+      if (!Number.isNaN(numericA) && !Number.isNaN(numericB)) {
+        return (numericA - numericB) * (sortOrder.sort === 'ASC' ? 1 : MINUS_ONE);
+      }
+
+      return 0;
     });
+
     setFilteredPlanets(sortedPlanets);
   };
 
