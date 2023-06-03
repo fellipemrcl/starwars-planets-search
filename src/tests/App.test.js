@@ -74,4 +74,17 @@ describe('Testando o App', () => {
     userEvent.click(filterButton);
     await screen.findByRole('cell', { name: /endor/i });
   });
+  it('Testa os filtros de ordenação ascendente e descendente', async () => {
+    const columnSortSelect = screen.getByTestId('column-sort');
+    const ascRadioButton = screen.getByTestId('column-sort-input-asc');
+    const descRadioButton = screen.getByTestId('column-sort-input-desc');
+    const sortButton = screen.getByTestId('column-sort-button');
+    userEvent.selectOptions(columnSortSelect, 'population');
+    userEvent.click(ascRadioButton);
+    userEvent.click(sortButton);
+    await screen.findByRole('cell', { name: /yavin iv/i });
+    userEvent.click(descRadioButton);
+    userEvent.click(sortButton);
+    await screen.findByRole('cell', { name: /coruscant/i });
+  });
 }); 
