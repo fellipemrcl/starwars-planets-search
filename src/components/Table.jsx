@@ -51,6 +51,8 @@ function Table() {
       .filter((comparisonOption) => comparisonOption !== comparisonFilter);
     setColumnFilterOptions(filteredColumnsOptions);
     setComparisonFilterOptions(filteredComparisonOptions);
+    setColumnsFilter(columnsFilterOptions[0]);
+    setComparisonFilter(comparisonFilterOptions[1]);
   };
 
   // IDEIA BASE P/ A LÓGICA: https://blog.logrocket.com/creating-react-sortable-table/
